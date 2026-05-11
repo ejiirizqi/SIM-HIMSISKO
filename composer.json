@@ -1,0 +1,11 @@
+{
+    "name": "himsisko/sim",
+    "description": "SIM HIMSISKO",
+    "require": {
+        "php": ">=8.0",
+        "dompdf/dompdf": "^2.0"
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
