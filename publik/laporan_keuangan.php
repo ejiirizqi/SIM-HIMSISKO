@@ -16,7 +16,7 @@ require dirname(__DIR__) . '/includes/publik_header.php';
 <h1 class="text-3xl font-bold text-slate-900">Transparansi keuangan organisasi</h1>
 <p class="text-slate-600 mt-2">Ringkasan arus kas (pemasukan, pengeluaran, dan sisa saldo).</p>
 
-<div class="grid sm:grid-cols-3 gap-4 mt-8">
+<div class="grid sm:grid-cols-3 gap-4 mt-4">
     <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4">
         <div class="text-xs font-semibold text-emerald-800 uppercase">Pemasukan</div>
         <div class="text-xl font-bold text-emerald-900 mt-1"><?= htmlspecialchars(format_rupiah($kas['pemasukan']), ENT_QUOTES, 'UTF-8') ?></div>
@@ -73,4 +73,4 @@ require dirname(__DIR__) . '/includes/publik_header.php';
     </div>
 </div>
 
-<?php require dirname(__DIR__) . '/includes/publik_footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/publik_footer_wrapper.php'; ?>

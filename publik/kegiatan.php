@@ -16,7 +16,7 @@ require dirname(__DIR__) . '/includes/publik_header.php';
 <h1 class="text-3xl font-bold text-slate-900">Daftar kegiatan</h1>
 <p class="text-slate-600 mt-2">Lihat kegiatan organisasi bersama dokumentasi di halaman detail.</p>
 
-<div class="mt-8 grid gap-4 sm:grid-cols-2">
+<div class="mt-4 grid gap-4 sm:grid-cols-2">
     <?php foreach ($rows as $r): ?>
         <?php $st = status_kegiatan_label((string)$r['status']); ?>
         <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow transition">
@@ -46,4 +46,4 @@ require dirname(__DIR__) . '/includes/publik_header.php';
 <?php if (count($rows) === 0): ?>
     <p class="text-slate-500 mt-6">Belum ada kegiatan yang dipublikasi.</p>
 <?php endif; ?>
-<?php require dirname(__DIR__) . '/includes/publik_footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/publik_footer_wrapper.php'; ?>

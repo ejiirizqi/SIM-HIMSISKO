@@ -13,7 +13,7 @@ require dirname(__DIR__) . '/includes/publik_header.php';
 <h1 class="text-3xl font-bold text-slate-900">Pengumuman</h1>
 <p class="text-slate-600 mt-2">Informasi resmi bagi anggota HIMSISKO.</p>
 
-<div class="mt-8 space-y-5">
+<div class="mt-4 space-y-5">
     <?php foreach ($rows as $row): ?>
         <article class="rounded-2xl border border-indigo-100 bg-white p-6 shadow-md shadow-indigo-50">
             <h2 class="text-xl font-black text-indigo-950"><?= htmlspecialchars((string)$row['judul'], ENT_QUOTES, 'UTF-8') ?></h2>
@@ -25,4 +25,4 @@ require dirname(__DIR__) . '/includes/publik_header.php';
 <?php if (count($rows) === 0): ?>
     <p class="text-slate-500 mt-6">Saat ini belum ada pengumuman aktif.</p>
 <?php endif; ?>
-<?php require dirname(__DIR__) . '/includes/publik_footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/publik_footer_wrapper.php'; ?>

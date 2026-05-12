@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/koneksi.php';
 require_once dirname(__DIR__) . '/helpers/csrf.php';
+require_once dirname(__DIR__) . '/helpers/secure_upload.php';
+require_once dirname(__DIR__) . '/helpers/upload_storage.php';
 require_once dirname(__DIR__) . '/config/auth.php';
 
 require_role('admin');
+
 
 $pageTitle = 'Form kegiatan';
 $activeNav = 'kegiatan';
@@ -44,6 +47,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = (string)($_POST['status'] ?? '');
     $allowed = ['rencana', 'berlangsung', 'selesai', 'dibatalkan'];
 
+    // Upload foto dokumentasi (opsional saat edit, wajib saat tambah)
+    // Minimal 1 foto tiap kegiatan.
+    $fotoField = $_FILES['foto_kegiatan'] ?? null;
+    $fotoCount = 0;
+    if ($fotoField && is_array($fotoField['name'] ?? null)) {
+        $fotoCount = count((array)($fotoField['name'] ?? []));
+    } elseif ($fotoField && isset($fotoField['name']) && $fotoField['name'] !== '') {
+        $fotoCount = 1;
+    }
+
+
     if ($judul === '') {
         $flash = 'Judul wajib diisi.';
     } elseif ($tanggal === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
@@ -78,17 +92,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = (int)db()->lastInsertId();
             log_activity((int)current_user()['id'], 'admin', (string)(current_user()['username'] ?? ''), 'Tambah kegiatan', 'ID: ' . $id . ' Judul: ' . $judul);
         }
-        header('Location: ' . url('admin/kegiatan.php'));
-        exit;
+
+        // Simpan foto dokumentasi minimal 1 saat tambah.
+        $needPhoto = !$edit;
+        if ($needPhoto && $fotoCount < 1) {
+            $flash = 'Minimal 1 foto kegiatan wajib diunggah.';
+        } else {
+            // normalisasi array upload (support multiple)
+            $photoFiles = [];
+            if ($fotoField && is_array($fotoField['name'] ?? null)) {
+                $names = (array)$fotoField['name'];
+                foreach ($names as $idx => $n) {
+                    $n = (string)$n;
+                    if (trim($n) === '') continue;
+                    $photoFiles[] = [
+                        'name' => (string)($fotoField['name'][$idx] ?? ''),
+                        'type' => (string)($fotoField['type'][$idx] ?? ''),
+                        'tmp_name' => (string)($fotoField['tmp_name'][$idx] ?? ''),
+                        'error' => (int)($fotoField['error'][$idx] ?? UPLOAD_ERR_NO_FILE),
+                        'size' => (int)($fotoField['size'][$idx] ?? 0),
+                    ];
+                }
+            }
+
+            // Kalau input tunggal, jadikan array 1 item
+            if ($photoFiles === [] && $fotoField && isset($fotoField['name']) && (string)$fotoField['name'] !== '') {
+                $photoFiles[] = $fotoField;
+            }
+
+            $photoExt = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+            $maxPhoto = 8 * 1024 * 1024;
+
+            foreach ($photoFiles as $f) {
+                // skip no-file
+                if (($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) continue;
+
+                $res = save_upload_public($f, 'dok_kegiatan', $photoExt, $maxPhoto);
+                if (!($res['ok'] ?? false)) {
+                    $flash = $res['error'] ?? 'Gagal upload foto dokumentasi.';
+                    $flashType = 'err';
+                    break;
+                }
+
+                $rel = (string)($res['relative'] ?? '');
+                $stmtD = db()->prepare(
+                    'INSERT INTO dokumentasi (kegiatan_id, jenis, file_path, deskripsi) VALUES (?,?,?,?)'
+                );
+                $stmtD->execute([
+                    $id,
+                    'foto',
+                    $rel,
+                    $deskripsi === '' ? null : $deskripsi,
+                ]);
+            }
+        }
+
+        if ($flash === '') {
+            header('Location: ' . url('admin/kegiatan.php'));
+            exit;
+        }
+
+        // fallback row utk render ulang saat ada error upload
+        $row = [
+            'judul' => $judul,
+            'deskripsi' => $deskripsi,
+            'tanggal' => $tanggal,
+            'lokasi' => $lokasi,
+            'status' => in_array($status, $allowed, true) ? $status : 'rencana',
+        ];
+        // fallback row utk render ulang saat ada error upload/validasi
+        $row = [
+            'judul' => $judul,
+            'deskripsi' => $deskripsi,
+            'tanggal' => $tanggal,
+            'lokasi' => $lokasi,
+            'status' => in_array($status, $allowed, true) ? $status : 'rencana',
+        ];
     }
-    $row = [
-        'judul' => $judul,
-        'deskripsi' => $deskripsi,
-        'tanggal' => $tanggal,
-        'lokasi' => $lokasi,
-        'status' => in_array($status, $allowed, true) ? $status : 'rencana',
-    ];
+
+    // Render ulang form saat ada error
+    // (row sudah diisi)
 }
+
 
 $csrf = htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8');
 
@@ -104,7 +189,7 @@ require dirname(__DIR__) . '/includes/admin_header.php';
 <?php endif; ?>
 
 <div class="max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-4" enctype="multipart/form-data">
         <input type="hidden" name="_csrf" value="<?= $csrf ?>">
         <div>
             <label class="block text-sm font-medium text-slate-700">Judul kegiatan</label>
@@ -135,6 +220,13 @@ require dirname(__DIR__) . '/includes/admin_header.php';
             <input type="text" name="lokasi" value="<?= htmlspecialchars((string)($row['lokasi'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Contoh: Aula kampus">
         </div>
+
+        <div>
+            <label class="block text-sm font-medium text-slate-700">Upload foto dokumentasi (opsional saat edit, minimal 1 saat tambah)</label>
+            <input type="file" name="foto_kegiatan[]" accept="image/*" multiple class="mt-1 w-full text-sm">
+            <p class="text-xs text-slate-500 mt-1">Format: JPG/JPEG/PNG/WEBP/GIF (max ~8MB per file)</p>
+        </div>
+
         <div class="pt-2 flex gap-3">
             <button type="submit" class="rounded-lg bg-slate-900 text-white font-semibold px-5 py-2.5 hover:bg-slate-800">Simpan</button>
             <a href="<?= htmlspecialchars(url('admin/kegiatan.php'), ENT_QUOTES, 'UTF-8') ?>" class="rounded-lg border border-slate-300 px-5 py-2.5 text-slate-700 font-medium hover:bg-slate-50">Batal</a>
