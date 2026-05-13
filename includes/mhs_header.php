@@ -199,6 +199,64 @@ $navIcons = [
     </style>
 </head>
 <body>
+<script>
+    // Mahasiswa Sidebar Toggle
+    (function() {
+        const shell = document.getElementById('mhs-shell');
+        const openBtn = document.getElementById('mhs-open-btn');
+        const expandBtn = document.getElementById('mhs-expand-btn');
+        const overlay = document.getElementById('mhs-overlay');
+
+        const isMobile = () => window.innerWidth < 1024;
+
+        const initState = () => {
+            if (isMobile()) {
+                // Mobile: start with sidebar closed (mhs-open class not present)
+                shell.classList.remove('mhs-open');
+            } else {
+                // Desktop: start with sidebar open (mhs-open class not present)
+                shell.classList.remove('mhs-open');
+                shell.classList.remove('mhs-collapsed');
+            }
+        };
+
+        const openSidebar = () => {
+            shell.classList.add('mhs-open');
+        };
+
+        const closeSidebar = () => {
+            shell.classList.remove('mhs-open');
+        };
+
+        const toggleSidebar = () => {
+            shell.classList.toggle('mhs-collapsed');
+        };
+
+        // Event listeners
+        if (openBtn) {
+            openBtn.addEventListener('click', openSidebar);
+        }
+
+        if (expandBtn) {
+            expandBtn.addEventListener('click', toggleSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isMobile() && shell.classList.contains('mhs-open')) {
+                closeSidebar();
+            }
+        });
+
+        // Initialize and handle resize
+        initState();
+        window.addEventListener('resize', initState);
+    })();
+</script>
 
 <div id="mhs-overlay" aria-hidden="true"></div>
 

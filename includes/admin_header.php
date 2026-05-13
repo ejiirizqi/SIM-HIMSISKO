@@ -99,9 +99,6 @@ $navClass = function (bool $on): string {
                         <div class="truncate text-xs text-slate-400">HIMSISKO IBI-K57</div>
                     </div>
                 </a>
-                <button type="button" id="admin-sidebar-close" class="rounded-lg p-2 text-slate-300 hover:bg-slate-800 lg:hidden" aria-label="Tutup menu">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
             </div>
 
             <!-- Navigation -->
@@ -192,12 +189,7 @@ $navClass = function (bool $on): string {
             </nav>
 
             <!-- Sidebar Toggle (Desktop) -->
-            <div class="border-t border-slate-700 p-4 hidden lg:flex justify-center">
-                <button type="button" id="admin-sidebar-toggle" class="inline-flex items-center gap-2 rounded-full border border-slate-500 bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
-                    <span>Tutup Sidebar</span>
-                </button>
-            </div>
+           
 
             <!-- Footer Sidebar (Mobile) -->
             <div class="border-t border-slate-700 p-4 text-sm lg:hidden">
@@ -247,6 +239,65 @@ $navClass = function (bool $on): string {
                 </details>
             </div>
         </header>
+
+        <script>
+            // Admin Sidebar Toggle
+            (function() {
+                const body = document.body;
+                const sidebarOpen = document.getElementById('admin-sidebar-open');
+                const sidebarExpandBtn = document.getElementById('admin-sidebar-expand-btn');
+                const overlay = document.getElementById('admin-sidebar-overlay');
+                const sidebar = document.getElementById('admin-sidebar');
+
+                const isMobile = () => window.innerWidth < 1024;
+
+                const initState = () => {
+                    if (isMobile()) {
+                        // Mobile: start with sidebar hidden
+                        body.classList.add('admin-sidebar-collapsed');
+                    } else {
+                        // Desktop: sidebar visible
+                        body.classList.remove('admin-sidebar-collapsed');
+                    }
+                };
+
+                const openSidebar = () => {
+                    body.classList.remove('admin-sidebar-collapsed');
+                };
+
+                const closeSidebar = () => {
+                    body.classList.add('admin-sidebar-collapsed');
+                };
+
+                const toggleSidebar = () => {
+                    body.classList.toggle('admin-sidebar-collapsed');
+                };
+
+                // Event listeners
+                if (sidebarOpen) {
+                    sidebarOpen.addEventListener('click', openSidebar);
+                }
+
+                if (sidebarExpandBtn) {
+                    sidebarExpandBtn.addEventListener('click', toggleSidebar);
+                }
+
+                if (overlay) {
+                    overlay.addEventListener('click', closeSidebar);
+                }
+
+                // Close sidebar with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && isMobile() && !body.classList.contains('admin-sidebar-collapsed')) {
+                        closeSidebar();
+                    }
+                });
+
+                // Initialize and handle resize
+                initState();
+                window.addEventListener('resize', initState);
+            })();
+        </script>
 
         <main class="min-h-0 flex-1 overflow-auto">
             <div class="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6 lg:px-10 lg:py-10">

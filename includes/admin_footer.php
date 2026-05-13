@@ -1,100 +1,92 @@
-            </div>
+</div><!-- /.mx-auto max-w-6xl -->
         </main>
-    </div>
-</div>
+    </div><!-- /#adm-content -->
+</div><!-- /#adm-shell -->
+
 <script>
 (function () {
-    var side = document.getElementById('admin-sidebar');
-    var overlay = document.getElementById('admin-sidebar-overlay');
-    var openBtn = document.getElementById('admin-sidebar-open');
-    var closeBtn = document.getElementById('admin-sidebar-close');
-    var toggleBtn = document.getElementById('admin-sidebar-toggle');
-    var expandBtn = document.getElementById('admin-sidebar-expand-btn');
-    var desktopCollapsed = false;
-    if (!side || !overlay) return;
+    'use strict';
 
-    function isMobile() {
-        return window.matchMedia('(max-width: 1023px)').matches;
+    const body        = document.body;
+    const overlay     = document.getElementById('adm-overlay');
+    const openBtn     = document.getElementById('adm-open-btn');
+    const collapseBtn = document.getElementById('adm-collapse-btn');
+    const expandBtn   = document.getElementById('adm-expand-btn');
+    const collapseIcon  = document.getElementById('adm-collapse-icon');
+    const collapseLabel = document.getElementById('adm-collapse-label');
+    const userMenu      = document.getElementById('adm-user-menu');
+    const groupBtn      = document.getElementById('adm-group-anggota-btn');
+    const groupChildren = document.getElementById('adm-group-anggota-children');
+
+    let desktopCollapsed = false;
+
+    /* ── Mobile sidebar ─────────────────────── */
+    function openMobile() {
+        body.classList.add('adm-open');
+        document.documentElement.style.overflow = 'hidden';
     }
 
     function closeMobile() {
-        side.classList.add('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        overlay.classList.remove('opacity-100');
-        document.body.classList.remove('overflow-hidden');
-        if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+        body.classList.remove('adm-open');
+        document.documentElement.style.overflow = '';
     }
 
-    function openMobile() {
-        side.classList.remove('-translate-x-full');
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-        overlay.classList.add('opacity-100');
-        document.body.classList.add('overflow-hidden');
-        if (openBtn) openBtn.setAttribute('aria-expanded', 'true');
-    }
+    if (openBtn)  openBtn.addEventListener('click', openMobile);
+    if (overlay)  overlay.addEventListener('click', closeMobile);
 
-    function updateToggleLabel() {
-        if (!toggleBtn) return;
-        var label = toggleBtn.querySelector('span');
-        if (label) {
-            label.textContent = desktopCollapsed ? 'Buka sidebar' : 'Tutup sidebar';
-        }
-    }
-
-    function setDesktopState() {
-        if (desktopCollapsed) {
-            document.body.classList.add('admin-sidebar-collapsed');
-            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
-        } else {
-            document.body.classList.remove('admin-sidebar-collapsed');
-            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
-        }
-        side.classList.remove('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        overlay.classList.remove('opacity-100');
-        document.body.classList.remove('overflow-hidden');
-        updateToggleLabel();
-    }
-
-    function setResponsiveState() {
-        if (isMobile()) {
-            desktopCollapsed = false;
-            document.body.classList.remove('admin-sidebar-collapsed');
-            closeMobile();
-        } else {
-            setDesktopState();
-        }
-    }
-
-    openBtn && openBtn.addEventListener('click', function () {
-        if (side.classList.contains('-translate-x-full')) {
-            openMobile();
-        } else {
-            closeMobile();
-        }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { closeMobile(); closeUserMenu(); }
     });
 
-    toggleBtn && toggleBtn.addEventListener('click', function () {
-        desktopCollapsed = !desktopCollapsed;
-        setDesktopState();
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 1024) closeMobile();
     });
 
-    expandBtn && expandBtn.addEventListener('click', function () {
-        desktopCollapsed = false;
-        setDesktopState();
-    });
+    /* ── Desktop collapse ───────────────────── */
+    function setCollapsed(state) {
+        desktopCollapsed = state;
+        body.classList.toggle('adm-collapsed', state);
+        if (collapseIcon) {
+            collapseIcon.innerHTML = state
+                ? '<path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7"/>'
+                : '<path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7"/>';
+        }
+        if (collapseLabel) collapseLabel.textContent = state ? 'Buka sidebar' : 'Tutup sidebar';
+    }
 
-    closeBtn && closeBtn.addEventListener('click', closeMobile);
-    overlay.addEventListener('click', closeMobile);
+    if (collapseBtn) collapseBtn.addEventListener('click', () => setCollapsed(!desktopCollapsed));
+    if (expandBtn)   expandBtn.addEventListener('click',   () => setCollapsed(false));
 
-    side.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function () {
-            if (isMobile()) closeMobile();
+    /* ── Group dropdown (Manajemen Anggota) ─── */
+    if (groupBtn && groupChildren) {
+        groupBtn.addEventListener('click', function () {
+            const isOpen = groupChildren.classList.toggle('open');
+            groupBtn.classList.toggle('open', isOpen);
+            groupBtn.setAttribute('aria-expanded', String(isOpen));
         });
+    }
+
+    /* ── User dropdown ──────────────────────── */
+    function openUserMenu() {
+        if (!userMenu) return;
+        userMenu.classList.add('open');
+        userMenu.querySelector('.adm-topbar-user-btn')?.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeUserMenu() {
+        if (!userMenu) return;
+        userMenu.classList.remove('open');
+        userMenu.querySelector('.adm-topbar-user-btn')?.setAttribute('aria-expanded', 'false');
+    }
+
+    userMenu?.querySelector('.adm-topbar-user-btn')?.addEventListener('click', function (e) {
+        e.stopPropagation();
+        userMenu.classList.contains('open') ? closeUserMenu() : openUserMenu();
     });
 
-    window.addEventListener('resize', setResponsiveState);
-    setResponsiveState();
+    document.addEventListener('click', function (e) {
+        if (userMenu && !userMenu.contains(e.target)) closeUserMenu();
+    });
 })();
 </script>
 </body>
