@@ -39,6 +39,8 @@ require dirname(__DIR__) . '/includes/publik_header.php';
     <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold <?= $st['badge'] ?>"><?= htmlspecialchars($st['teks'], ENT_QUOTES, 'UTF-8') ?></span>
 </div>
 
+
+
 <dl class="mt-4 flex flex-wrap gap-6 text-sm text-slate-600">
     <div><dt class="font-semibold text-slate-900">Tanggal</dt><dd><?= htmlspecialchars((string)$k['tanggal'], ENT_QUOTES, 'UTF-8') ?></dd></div>
     <div><dt class="font-semibold text-slate-900">Lokasi</dt><dd><?= htmlspecialchars((string)($k['lokasi'] ?: '-'), ENT_QUOTES, 'UTF-8') ?></dd></div>
@@ -74,5 +76,7 @@ require dirname(__DIR__) . '/includes/publik_header.php';
         </div>
     <?php endif; ?>
 </section>
+
+
 
 <?php require dirname(__DIR__) . '/includes/publik_footer.php'; ?>
