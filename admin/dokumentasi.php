@@ -34,6 +34,7 @@ $flashType = 'ok';
 
 $maxPhoto = 8 * 1024 * 1024;
 $maxVideo = 50 * 1024 * 1024;
+$maxDocument = 20 * 1024 * 1024;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_validate($_POST['_csrf'] ?? null);
@@ -42,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'upload') {
         $jenis = (string)($_POST['jenis'] ?? '');
         $deskripsi = trim((string)($_POST['deskripsi'] ?? ''));
-        if (!in_array($jenis, ['foto', 'video'], true)) {
-            $flash = 'Pilih foto atau video.';
+        if (!in_array($jenis, ['foto', 'video', 'proposal', 'laporan'], true)) {
+            $flash = 'Pilih jenis dokumentasi yang benar.';
             $flashType = 'err';
         } elseif (!isset($_FILES['berkas']) || (int)$_FILES['berkas']['error'] === UPLOAD_ERR_NO_FILE) {
             $flash = 'Pilih berkas dokumentasi.';
@@ -51,8 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $photoExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
             $videoExt = ['mp4', 'webm', 'mov'];
-            $ext = $jenis === 'foto' ? $photoExt : $videoExt;
-            $maxB = $jenis === 'foto' ? $maxPhoto : $maxVideo;
+            $docExt = ['jpg', 'jpeg', 'pdf', 'docx'];
+            if ($jenis === 'foto') {
+                $ext = $photoExt;
+                $maxB = $maxPhoto;
+            } elseif ($jenis === 'video') {
+                $ext = $videoExt;
+                $maxB = $maxVideo;
+            } else {
+                $ext = $docExt;
+                $maxB = $maxDocument;
+            }
             $res = save_upload_public($_FILES['berkas'], 'dok_kegiatan', $ext, $maxB);
             if (!$res['ok']) {
                 $flash = $res['error'] ?? 'Gagal upload.';
@@ -112,7 +122,7 @@ $urlKeg = url('admin/dokumentasi.php?kegiatan_id=' . $kegiatanId);
 <div class="grid gap-8 lg:grid-cols-5">
     <div class="lg:col-span-2 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 class="text-lg font-semibold text-slate-900">Unggah dokumentasi</h2>
-        <p class="text-xs text-slate-500 mt-1 mb-4">Foto: JPG/PNG/GIF/WebP (max 8MB). Video: MP4/WebM/MOV (max 50MB).</p>
+        <p class="text-xs text-red-600 mt-1 mb-4">* Foto: JPG/PNG/GIF/WebP (max 8MB). Video: MP4/WebM/MOV (max 50MB). Proposal/Laporan kegiatan: JPG/PDF/DOCX (max 20MB).</p>
         <form method="post" action="<?= htmlspecialchars($urlKeg, ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="_csrf" value="<?= $csrf ?>">
             <input type="hidden" name="action" value="upload">
@@ -121,11 +131,14 @@ $urlKeg = url('admin/dokumentasi.php?kegiatan_id=' . $kegiatanId);
                 <select name="jenis" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2">
                     <option value="foto">Foto kegiatan</option>
                     <option value="video">Video kegiatan</option>
+                    <option value="proposal">Proposal kegiatan</option>
+                    <option value="laporan">Laporan kegiatan</option>
                 </select>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700">File</label>
                 <input type="file" name="berkas" required class="mt-1 w-full text-sm">
+                <p class="text-xs text-red-600 mt-1">* .jpg / .pdf / .docx untuk proposal atau laporan.</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700">Deskripsi dokumentasi</label>
@@ -151,10 +164,23 @@ $urlKeg = url('admin/dokumentasi.php?kegiatan_id=' . $kegiatanId);
                                     <img src="<?= htmlspecialchars(url_upload((string)$d['file_path']), ENT_QUOTES, 'UTF-8') ?>"
                                          alt="" class="rounded-lg max-h-48 w-full object-cover bg-white">
                                 </a>
-                            <?php else: ?>
+                            <?php elseif ($d['jenis'] === 'video'): ?>
                                 <video controls class="w-full rounded-lg max-h-48 bg-black">
                                     <source src="<?= htmlspecialchars(url_upload((string)$d['file_path']), ENT_QUOTES, 'UTF-8') ?>">
                                 </video>
+                            <?php else:
+                                $filePath = htmlspecialchars(url_upload((string)$d['file_path']), ENT_QUOTES, 'UTF-8');
+                                $fileExt = strtolower(pathinfo((string)$d['file_path'], PATHINFO_EXTENSION));
+                                $fileTypeLabel = $d['jenis'] === 'proposal' ? 'Proposal kegiatan' : 'Laporan kegiatan';
+                            ?>
+                                <div class="rounded-xl border border-slate-200 bg-white p-4 text-slate-700">
+                                    <div class="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
+                                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700">📄</span>
+                                        <?= htmlspecialchars($fileTypeLabel, ENT_QUOTES, 'UTF-8') ?>
+                                    </div>
+                                    <div class="mb-2 text-xs text-slate-500">Tipe file: <?= htmlspecialchars($fileExt, ENT_QUOTES, 'UTF-8') ?></div>
+                                    <a href="<?= $filePath ?>" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800">Lihat / Unduh</a>
+                                </div>
                             <?php endif; ?>
                             <p class="text-xs mt-2 text-slate-500"><?= htmlspecialchars((string)$d['deskripsi'] ?: '(tanpa deskripsi)', ENT_QUOTES, 'UTF-8') ?></p>
                             <form method="post" class="mt-2" onsubmit="return confirm('Hapus item ini?');">

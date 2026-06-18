@@ -31,11 +31,12 @@ require dirname(__DIR__) . '/includes/publik_header.php';
     </div>
 </div>
 
-<p class="mt-6 mb-10">
+<p class="mt-6 mb-10 flex flex-wrap gap-3">
     <a href="<?= htmlspecialchars(url('publik/pdf_laporan_keuangan.php'), ENT_QUOTES, 'UTF-8') ?>"
        class="inline-flex items-center rounded-xl bg-white border border-slate-300 px-4 py-2 text-sm font-bold text-slate-900 hover:bg-slate-50 shadow-sm">
         Unduh laporan PDF
     </a>
+    <button type="button" onclick="window.print()" class="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Cetak laporan</button>
 </p>
 
 <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">

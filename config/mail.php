@@ -15,3 +15,4 @@ const MAIL_SMTP_PASS = '';
 const MAIL_SMTP_SECURE = 'tls';
 const MAIL_FROM_ADDRESS = '';
 const MAIL_FROM_NAME = 'SIM HIMSISKO';
+const MAIL_ADMIN_NOTIFICATION = 'eggyrizqi10@gmail.com';

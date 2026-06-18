@@ -55,15 +55,16 @@ $navIcons = [
     <style>
         :root {
             --sb-w: 16rem;
-            --sb-bg: #080d18;
-            --sb-border: rgba(255,255,255,.06);
-            --sb-text: #7c8fa6;
-            --sb-text-hover: #e2e8f0;
-            --sb-active-bg: rgba(99,179,237,.13);
-            --sb-active-fg: #63b3ed;
-            --sb-active-bar: #63b3ed;
-            --accent: #63b3ed;
-            --accent-glow: rgba(99,179,237,.18);
+                /* Match admin sidebar look: dark background, light text */
+                --sb-bg: #0f1724; /* slate-950 */
+                --sb-border: rgba(255,255,255,.06);
+                --sb-text: #cbd5e1; /* slate-300 */
+                --sb-text-hover: #ffffff;
+                --sb-active-bg: rgba(14,165,233,.12); /* sky-ish accent */
+                --sb-active-fg: #ffffff;
+                --sb-active-bar: #38bdf8; /* sky-400 */
+                --accent: #38bdf8;
+                --accent-glow: rgba(56,189,248,.12);
             --topbar-h: 3.375rem;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,14 +90,14 @@ $navIcons = [
         .mhs-brand-logo-wrap { position: relative; flex-shrink: 0; }
         .mhs-brand-logo { width: 2.375rem; height: 2.375rem; border-radius: .625rem; object-fit: contain; padding: .2rem; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); display: block; }
         .mhs-brand-logo-wrap::after { content: ''; position: absolute; bottom: -.1875rem; right: -.1875rem; width: .5rem; height: .5rem; background: var(--accent); border-radius: 50%; border: 2px solid var(--sb-bg); }
-        .mhs-brand-title { font-size: .8125rem; font-weight: 700; color: #e8edf2; letter-spacing: -.015em; line-height: 1.25; }
+        .mhs-brand-title { font-size: .8125rem; font-weight: 700; color: #ffffff; letter-spacing: -.015em; line-height: 1.25; }
         .mhs-brand-sub { font-size: .625rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--sb-text); margin-top: .0625rem; }
 
         /* NAV */
         .mhs-nav { flex: 1; overflow-y: auto; padding: 1rem .75rem; display: flex; flex-direction: column; gap: .125rem; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent; }
         .mhs-nav-label { font-size: .5625rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: rgba(124,143,166,.45); padding: .625rem .75rem .3125rem; }
         .mhs-nav-link { display: flex; align-items: center; gap: .75rem; padding: .5625rem .875rem; border-radius: .625rem; font-size: .8125rem; font-weight: 500; color: var(--sb-text); text-decoration: none; transition: background .16s, color .16s; border-left: 2px solid transparent; }
-        .mhs-nav-link:hover { background: rgba(255,255,255,.055); color: var(--sb-text-hover); }
+        .mhs-nav-link:hover { background: rgba(255,255,255,.04); color: var(--sb-text-hover); }
         .mhs-nav-link--active { background: var(--sb-active-bg); color: var(--sb-active-fg); border-left-color: var(--sb-active-bar); font-weight: 600; }
         .mhs-nav-link--active:hover { background: var(--sb-active-bg); color: var(--sb-active-fg); }
         .mhs-nav-icon-wrap { width: 1.625rem; height: 1.625rem; border-radius: .375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .16s; }
@@ -108,14 +109,14 @@ $navIcons = [
         .mhs-nav-link-label { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* FOOTER */
-        .mhs-sidebar-footer { border-top: 1px solid var(--sb-border); padding: .875rem .75rem; flex-shrink: 0; background: rgba(0,0,0,.15); }
-        .mhs-user-row { display: flex; align-items: center; gap: .75rem; padding: .5rem .75rem; border-radius: .625rem; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.05); margin-bottom: .625rem; }
-        .mhs-avatar { width: 2.125rem; height: 2.125rem; border-radius: .375rem; overflow: hidden; background: linear-gradient(135deg, rgba(99,179,237,.25), rgba(99,179,237,.1)); display: flex; align-items: center; justify-content: center; font-size: .6875rem; font-weight: 700; color: var(--accent); flex-shrink: 0; border: 1px solid rgba(99,179,237,.22); }
+        .mhs-sidebar-footer { border-top: 1px solid var(--sb-border); padding: .875rem .75rem; flex-shrink: 0; background: transparent; }
+        .mhs-user-row { display: flex; align-items: center; gap: .75rem; padding: .5rem .75rem; border-radius: .625rem; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.03); margin-bottom: .625rem; }
+        .mhs-avatar { width: 2.125rem; height: 2.125rem; border-radius: .375rem; overflow: hidden; background: linear-gradient(135deg, rgba(56,189,248,.12), rgba(56,189,248,.06)); display: flex; align-items: center; justify-content: center; font-size: .6875rem; font-weight: 700; color: var(--accent); flex-shrink: 0; border: 1px solid rgba(56,189,248,.12); }
         .mhs-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .mhs-user-name { font-size: .75rem; font-weight: 600; color: #dde5ef; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: 1; min-width: 0; }
-        .mhs-user-role { font-size: .5875rem; color: rgba(124,143,166,.65); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; margin-top: .0625rem; }
-        .mhs-logout-btn { display: flex; align-items: center; gap: .625rem; width: 100%; padding: .5rem .875rem; border-radius: .625rem; font-size: .7875rem; font-weight: 600; color: #f87171; text-decoration: none; transition: background .15s, color .15s; }
-        .mhs-logout-btn:hover { background: rgba(248,113,113,.1); color: #fca5a5; }
+        .mhs-user-name { font-size: .75rem; font-weight: 600; color: #ffffff; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: 1; min-width: 0; }
+        .mhs-user-role { font-size: .5875rem; color: rgba(203,213,225,.7); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; margin-top: .0625rem; }
+        .mhs-logout-btn { display: flex; align-items: center; gap: .625rem; width: 100%; padding: .5rem .875rem; border-radius: .625rem; font-size: .7875rem; font-weight: 600; color: #fb7185; text-decoration: none; transition: background .15s, color .15s; }
+        .mhs-logout-btn:hover { background: rgba(248,113,113,.06); color: #fecaca; }
         .mhs-logout-btn svg { width: .875rem; height: .875rem; flex-shrink: 0; opacity: .8; }
 
         /* COLLAPSE BTN */

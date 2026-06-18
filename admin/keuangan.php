@@ -110,6 +110,10 @@ require dirname(__DIR__) . '/includes/admin_header.php';
         <h1 class="text-2xl font-bold text-slate-900">CRUD laporan keuangan</h1>
         <p class="text-slate-600 mt-1">Pemasukan, pengeluaran, tanggal, keterangan — total saldo dihitung otomatis.</p>
     </div>
+    <div class="flex flex-wrap gap-3">
+        <a href="<?= htmlspecialchars(url('publik/pdf_laporan_keuangan.php'), ENT_QUOTES, 'UTF-8') ?>" class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 shadow-sm">Ekspor PDF</a>
+        <button type="button" onclick="window.print()" class="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Cetak</button>
+    </div>
 </div>
 
 <?php if ($flash !== ''): ?>

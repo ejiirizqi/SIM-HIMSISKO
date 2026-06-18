@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/koneksi.php';
 require_once __DIR__ . '/helpers/csrf.php';
+require_once __DIR__ . '/helpers/mail_approval.php';
 require_once __DIR__ . '/config/auth.php';
 
 if (current_user()) {
@@ -58,6 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                     $newUserId = (int)db()->lastInsertId();
                     log_activity($newUserId, 'mahasiswa', $username, 'Daftar akun mahasiswa', 'Status: pending');
+                    $mailRes = mail_notify_admin_new_registration($username, $emailNorm, $nama);
+                    if (!$mailRes['ok']) {
+                        log_activity($newUserId, 'system', 'system', 'Gagal kirim notifikasi admin', $mailRes['error']);
+                    }
                     $ok = true;
                 } catch (PDOException $e) {
                     if ((int)$e->errorInfo[1] === 1062) {

@@ -14,7 +14,13 @@ $rows = $stmt->fetchAll();
 require dirname(__DIR__) . '/includes/publik_header.php';
 ?>
 <h1 class="text-3xl font-bold text-slate-900">Daftar kegiatan</h1>
-<p class="text-slate-600 mt-2">Lihat kegiatan organisasi bersama dokumentasi di halaman detail.</p>
+<div class="mt-2 flex items-center gap-3">
+    <p class="text-slate-600">Lihat kegiatan organisasi bersama dokumentasi di halaman detail.</p>
+    <div class="ml-auto flex gap-2">
+        <a href="<?= htmlspecialchars(url('publik/pdf_laporan_kegiatan.php'), ENT_QUOTES, 'UTF-8') ?>" target="_blank" class="inline-flex items-center rounded-xl bg-white border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">Ekspor PDF</a>
+        <button type="button" onclick="window.print()" class="inline-flex items-center rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">Cetak</button>
+    </div>
+</div>
 
 <div class="mt-4 grid gap-4 sm:grid-cols-2">
     <?php foreach ($rows as $r): ?>

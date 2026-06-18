@@ -46,10 +46,12 @@ require dirname(__DIR__) . '/includes/admin_header.php';
         <h1 class="text-2xl font-bold text-slate-900">Data kegiatan</h1>
         <p class="text-slate-600 mt-1">Kelola judul, deskripsi, tanggal, lokasi, dan status</p>
     </div>
-    <div>
+    <div class="flex items-center gap-3">
         <a href="<?= htmlspecialchars(url('admin/kegiatan_form.php'), ENT_QUOTES, 'UTF-8') ?>" class="inline-flex rounded-lg bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 hover:bg-slate-800">
             Tambah kegiatan
         </a>
+        <a href="<?= htmlspecialchars(url('admin/pdf_laporan_kegiatan.php'), ENT_QUOTES, 'UTF-8') ?>" class="inline-flex rounded-lg border border-slate-300 bg-white text-sm font-semibold px-4 py-2.5 hover:bg-slate-50" target="_blank">Ekspor PDF</a>
+        <button type="button" onclick="window.print()" class="inline-flex rounded-lg bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 hover:bg-slate-800">Cetak</button>
     </div>
 </div>
 

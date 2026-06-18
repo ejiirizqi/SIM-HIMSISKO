@@ -71,9 +71,15 @@ $csrf = htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8');
 
 require dirname(__DIR__) . '/includes/admin_header.php';
 ?>
-<div class="mb-8">
-    <h1 class="text-2xl font-bold text-slate-900">Kelola pengumuman</h1>
-    <p class="text-slate-600 mt-1">buat, ubah, dan hapus pengumuman untuk mahasiswa</p>
+<div class="mb-8 flex items-start justify-between">
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">Kelola pengumuman</h1>
+        <p class="text-slate-600 mt-1">buat, ubah, dan hapus pengumuman untuk mahasiswa</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="<?= htmlspecialchars(url('admin/pdf_laporan_pengumuman.php'), ENT_QUOTES, 'UTF-8') ?>" class="inline-flex rounded-lg border border-slate-300 bg-white text-sm font-semibold px-4 py-2.5 hover:bg-slate-50" target="_blank">Ekspor PDF</a>
+        <button type="button" onclick="window.print()" class="inline-flex rounded-lg bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 hover:bg-slate-800">Cetak</button>
+    </div>
 </div>
 
 <?php if ($flash !== ''): ?>

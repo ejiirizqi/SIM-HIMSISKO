@@ -409,9 +409,12 @@ require dirname(__DIR__) . '/includes/admin_header.php';
                     <span class="table-top-title">Daftar Mahasiswa</span>
                     <span class="table-count"><?= $total ?> akun</span>
                 </div>
-                <div class="table-search-wrap">
+                <div style="display:flex;align-items:center;gap:.5rem">
+                    <div class="table-search-wrap">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <input type="search" class="table-search" placeholder="Cari mahasiswa..." id="mhs-search">
+                    </div>
+                    <a href="<?= htmlspecialchars(url('admin/pdf_laporan_mahasiswa.php'), ENT_QUOTES, 'UTF-8') ?>" class="btn btn--ghost" target="_blank">Ekspor PDF</a>
                 </div>
             </div>
 
